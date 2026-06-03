@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — CAP Counselor</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0a1628;--navy2:#112040;--navy3:#1a3060;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --cream:#faf8f4;--text:#1a1a2e;--muted:#6b7280;
+  --border:#e5e0d8;--radius:12px;
+  --green:#166534;--green-bg:#dcfce7;
+  --red:#991b1b;--red-bg:#fee2e2;
+  --amber:#92400e;--amber-bg:#fef3c7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+nav{background:var(--navy);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:1px solid rgba(201,168,76,0.2)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;color:var(--navy);font-size:18px;font-weight:700}
+.nav-title{color:#fff;font-size:15px;font-weight:600}
+.nav-sub{color:rgba(201,168,76,0.7);font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
+.nav-link{color:rgba(255,255,255,0.6);font-size:13px;padding:7px 16px;border-radius:8px;text-decoration:none;transition:all 0.2s}
+.nav-link:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-link.active{background:rgba(201,168,76,0.15);color:var(--gold2)}
+.nav-links{display:flex;gap:8px}
+
+main{max-width:1200px;margin:0 auto;padding:36px 24px 80px}
+
+/* Alert box */
+.alert{padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.6;margin-bottom:24px;display:flex;gap:10px;align-items:flex-start}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert-warn{background:#fffbeb;border:1px solid var(--gold);color:var(--amber)}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.card-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:600;color:var(--navy)}
+.card-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.card-body{padding:24px}
+
+/* Form grid */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.field input,.field select{padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);transition:border-color 0.2s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);background:#fff}
+.field-wide{grid-column:span 2}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy3)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{background:var(--gold2)}
+.btn-danger{background:#fff;color:var(--red);border:1px solid #fca5a5}
+.btn-danger:hover{background:var(--red-bg)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--navy)}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+thead tr{background:var(--navy);color:#fff}
+th{padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:0.05em;text-align:left}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-gray{background:#f3f4f6;color:#374151}
+
+/* Search bar */
+.search-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.search-input{flex:1;min-width:200px;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;background:var(--cream)}
+.search-input:focus{outline:none;border-color:var(--gold);background:#fff}
+
+/* Stats strip */
+.stats-strip{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.stat-pill{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.stat-pill-num{font-size:18px;font-weight:700;font-family:'Playfair Display',serif;color:var(--navy)}
+.stat-pill-label{font-size:11px;color:var(--muted);font-weight:500}
+
+.msg{font-size:13px;padding:8px 14px;border-radius:8px;margin-top:12px}
+.msg-success{background:var(--green-bg);color:var(--green)}
+.msg-error{background:var(--red-bg);color:var(--red)}
+
+@media(max-width:700px){
+  nav{padding:0 16px}
+  main{padding:20px 16px 60px}
+  .form-grid{grid-template-columns:1fr}
+  .field-wide{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">N</div>
+    <div>
+      <div class="nav-title">NextNode Guidance</div>
+      <div class="nav-sub">CAP Counselor</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Generator</a>
+    <a href="admin.html" class="nav-link active">Admin</a>
+  </div>
+</nav>
+
+<main>
+  <div class="stats-strip">
+    <div class="stat-pill">
+      <div class="stat-pill-num" id="stat-total">0</div>
+      <div class="stat-pill-label">Total Colleges</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title" id="form-title">Add New College</h2>
+        <p class="card-sub">Manage college details here.</p>
+      </div>
+      <button class="btn btn-outline" onclick="clearForm()">Clear Form</button>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>College Code</label>
+          <input type="text" id="c-collegeCode" placeholder="e.g. 3012">
+        </div>
+        <div class="field">
+          <label>Branch Code</label>
+          <input type="text" id="c-branchCode" placeholder="e.g. 24510">
+        </div>
+        <div class="field field-wide">
+          <label>College Name</label>
+          <input type="text" id="c-name" placeholder="Enter college name">
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="c-city" placeholder="Enter city">
+        </div>
+        <div class="field">
+          <label>Region</label>
+          <input type="text" id="c-region" placeholder="e.g. nashik">
+        </div>
+        <div class="field field-wide">
+          <label>Branches (Comma Separated)</label>
+          <input type="text" id="c-branches" placeholder="cs, it, aids, elec">
+        </div>
+        <div class="field">
+          <label>Open Cutoff</label>
+          <input type="number" id="c-open" step="0.01">
+        </div>
+        <div class="field">
+          <label>OBC Cutoff</label>
+          <input type="number" id="c-obc" step="0.01">
+        </div>
+        <div class="field">
+          <label>SC Cutoff</label>
+          <input type="number" id="c-sc" step="0.01">
+        </div>
+        <div class="field">
+          <label>ST Cutoff</label>
+          <input type="number" id="c-st" step="0.01">
+        </div>
+        <div class="field">
+          <label>NT Cutoff</label>
+          <input type="number" id="c-nt" step="0.01">
+        </div>
+        <div class="field">
+          <label>EWS Cutoff</label>
+          <input type="number" id="c-ews" step="0.01">
+        </div>
+        <div class="field">
+          <label>Fee (Per Year)</label>
+          <input type="number" id="c-fee" placeholder="90000">
+        </div>
+        <div class="field">
+          <label>NAAC Grade</label>
+          <input type="text" id="c-naac" placeholder="B+">
+        </div>
+        <div class="field">
+          <label>Hostel</label>
+          <select id="c-hostel">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addCollege()">Save College</button>
+      <div id="form-msg"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">College Database</h2>
+      <div class="search-bar" style="margin-bottom:0">
+        <input type="text" class="search-input" id="search" placeholder="Search by name or city..." oninput="renderTable()">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>COLLEGE NAME</th>
+            <th>LOCATION</th>
+            <th>BRANCHES</th>
+            <th>OPEN CUTOFF</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Bulk Import/Export</h2>
+    </div>
+    <div class="card-body">
+      <div class="field" style="margin-bottom: 12px;">
+        <label>CSV Data</label>
+        <textarea id="csv-input" rows="8" style="width:100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--border); font-family: monospace;" placeholder="Paste your CSV here...&#10;collegeCode,name,city,region,branchCode,branches,open,obc,sc,st,nt,ews,fee,naac,hostel"></textarea>
+      </div>
+      <button class="btn btn-gold" onclick="importCSV()">Import CSV</button>
+      <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+      <div id="import-msg"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+let db = JSON.parse(localStorage.getItem('nn_colleges') || '[]');
+let editId = null;
+
+function save() { localStorage.setItem('nn_colleges', JSON.stringify(db)); }
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = `msg msg-${type}`;
+  setTimeout(() => el.textContent = '', 3000);
+}
+
+function addCollege() {
+  const newCol = {
+    id: editId || 'c'+Date.now(),
+    collegeCode: document.getElementById('c-collegeCode').value.trim(),
+    name: document.getElementById('c-name').value.trim(),
+    city: document.getElementById('c-city').value.trim(),
+    region: document.getElementById('c-region').value,
+    branchCode: document.getElementById('c-branchCode').value.trim(),
+    branches: document.getElementById('c-branches').value.split(',').map(b=>b.trim().toLowerCase()).filter(b=>b),
+    open: parseFloat(document.getElementById('c-open').value) || 0,
+    obc: parseFloat(document.getElementById('c-obc').value) || 0,
+    sc: parseFloat(document.getElementById('c-sc').value) || 0,
+    st: parseFloat(document.getElementById('c-st').value) || 0,
+    nt: parseFloat(document.getElementById('c-nt').value) || 0,
+    ews: parseFloat(document.getElementById('c-ews').value) || 0,
+    fee: parseInt(document.getElementById('c-fee').value) || 90000,
+    naac: document.getElementById('c-naac').value,
+    hostel: document.getElementById('c-hostel').value === 'true'
+  };
+
+  if(!newCol.name || !newCol.branches.length) return showMsg('form-msg', 'Name & Branches are required', 'error');
+
+  if(editId) db = db.map(c => c.id === editId ? newCol : c);
+  else db.push(newCol);
+
+  save(); clearForm(); renderTable();
+  showMsg('form-msg', editId ? 'Updated successfully!' : 'Added successfully!', 'success');
+  editId = null;
+}
+
+function editCollege(id) {
+  const c = db.find(x => x.id === id);
+  if(!c) return;
+  editId = id;
+  document.getElementById('c-collegeCode').value = c.collegeCode || '';
+  document.getElementById('c-name').value = c.name;
+  document.getElementById('c-city').value = c.city;
+  document.getElementById('c-region').value = c.region;
+  document.getElementById('c-branchCode').value = c.branchCode || '';
+  document.getElementById('c-branches').value = (c.branches||[]).join(', ');
+  document.getElementById('c-open').value = c.open;
+  document.getElementById('c-obc').value = c.obc;
+  document.getElementById('c-sc').value = c.sc;
+  document.getElementById('c-st').value = c.st;
+  document.getElementById('c-nt').value = c.nt;
+  document.getElementById('c-ews').value = c.ews;
+  document.getElementById('c-fee').value = c.fee;
+  document.getElementById('c-naac').value = c.naac;
+  document.getElementById('c-hostel').value = c.hostel ? 'true' : 'false';
+  document.getElementById('form-title').textContent = 'Edit College';
+}
+
+function clearForm() {
+  editId = null;
+  document.getElementById('c-collegeCode').value = '';
+  document.getElementById('c-name').value = '';
+  document.getElementById('c-city').value = '';
+  document.getElementById('c-region').value = 'nashik';
+  document.getElementById('c-branchCode').value = '';
+  document.getElementById('c-branches').value = '';
+  ['open','obc','sc','st','nt','ews','fee'].forEach(id => document.getElementById('c-'+id).value = '');
+  document.getElementById('c-naac').value = 'B+';
+  document.getElementById('c-hostel').value = 'false';
+  document.getElementById('form-title').textContent = 'Add New College';
+}
+
+function renderTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = db.filter(c => c.name.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
+  
+  document.getElementById('stat-total').textContent = db.length;
+  
+  const html = filtered.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong><br><small style="color:var(--muted)">${c.collegeCode ? '['+c.collegeCode+']' : 'No Col Code'}</small></td>
+      <td>${c.city} <span class="badge badge-gray">${c.region}</span></td>
+      <td>${(c.branches||[]).map(b=>`<span class="badge badge-green" style="margin:2px">${b.toUpperCase()}</span>`).join('')}<br><small style="color:var(--muted)">Branch Code: ${c.branchCode || 'N/A'}</small></td>
+      <td><strong>${c.open.toFixed(1)}</strong></td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="editCollege('${c.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCollege('${c.id}')">Del</button>
+      </td>
+    </tr>
+  `).join('');
+  
+  document.getElementById('tbody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No colleges found</td></tr>';
+}
+
+function deleteCollege(id) {
+  if(confirm('Delete this college?')) {
+    db = db.filter(c => c.id !== id);
+    save(); renderTable();
+  }
+}
+
+// ── NEW ROBUST CSV IMPORT/EXPORT ──
+function importCSV() {
+  const text = document.getElementById('csv-input').value;
+  const lines = text.split(/\r?\n/);
+  let added = 0, errors = 0;
+
+  if (lines.length === 0) return;
+  const headerLine = lines[0].toLowerCase();
+  const isNewFormat = headerLine.includes('collegecode'); 
+
+  const parseCSVLine = (line) => {
+    const parts = [];
+    let cur = '', inQuote = false;
+    for(let i=0; i<line.length; i++) {
+      if(line[i] === '"') inQuote = !inQuote;
+      else if(line[i] === ',' && !inQuote) { parts.push(cur); cur = ''; }
+      else cur += line[i];
+    }
+    parts.push(cur);
+    return parts.map(p => p.trim());
+  };
+
+  lines.forEach((line, i) => {
+    if(i===0 || !line.trim()) return; 
+    const parts = parseCSVLine(line);
+
+    try {
+      let collegeCode, name, city, region, branchCode, branchStr, open, obc, sc, st, nt, ews, fee, naac, hostel;
+      
+      if (isNewFormat) {
+        if(parts.length < 15) { errors++; return; }
+        [collegeCode, name, city, region, branchCode, branchStr, open, obc, sc, st, nt, ews, fee, naac, hostel] = parts;
+      } else {
+        if(parts.length < 13) { errors++; return; }
+        collegeCode = ""; branchCode = "";
+        [name, city, region, branchStr, open, obc, sc, st, nt, ews, fee, naac, hostel] = parts;
+      }
+
+      const branches = branchStr ? branchStr.split('|').map(b=>b.trim().toLowerCase()) : [];
+
+      db.push({
+        id: 'c'+Date.now()+Math.random().toString(36).substr(2,5),
+        collegeCode: collegeCode,
+        branchCode: branchCode,
+        name:   name,
+        city:   city,
+        region: region.toLowerCase() || 'nashik',
+        branches: branches,
+        open:   parseFloat(open) || 0,
+        obc:    parseFloat(obc) || 0,
+        sc:     parseFloat(sc) || 0,
+        st:     parseFloat(st) || 0,
+        nt:     parseFloat(nt) || 0,
+        ews:    parseFloat(ews) || 0,
+        fee:    parseInt(fee)  || 90000,
+        naac:   naac || 'B+',
+        hostel: hostel.toLowerCase().includes('true'),
+      });
+      added++;
+    } catch(e) { errors++; }
+  });
+
+  save(); renderTable();
+  document.getElementById('csv-input').value = '';
+  const msg = `Imported ${added} colleges${errors ? ` (${errors} rows skipped due to errors)` : ''}.`;
+  showMsg('import-msg', msg, errors && !added ? 'error' : 'success');
+}
+
+function exportCSV() {
+  const header = 'collegeCode,name,city,region,branchCode,branches,open,obc,sc,st,nt,ews,fee,naac,hostel';
+  const rows = db.map(c =>
+    [c.collegeCode||'', c.name, c.city, c.region, c.branchCode||'', (c.branches||[]).join('|'), c.open, c.obc, c.sc, c.st, c.nt, c.ews, c.fee, c.naac, c.hostel].map(v => `"${v}"`).join(',')
+  );
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cap_colleges.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// Init
+renderTable();
+</script>
+</body>
+</html>
